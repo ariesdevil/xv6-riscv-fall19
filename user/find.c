@@ -65,7 +65,7 @@ void find(char *path, char *name) {
   switch(st.type) {
   case T_FILE:
     if (strcmp(basename(path), name) == 0) {
-      printf("file: %s\n", path);
+      printf("%s\n", path);
     }
     break;
   case T_DIR:
