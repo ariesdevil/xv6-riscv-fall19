@@ -175,6 +175,9 @@ QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-devic
 qemu: $K/kernel fs.img
 	$(QEMU) $(QEMUOPTS)
 
+index: $K/kernel fs.img
+	@echo done
+
 .gdbinit: .gdbinit.tmpl-riscv
 	sed "s/:1234/:$(GDBPORT)/" < $^ > $@
 

@@ -27,7 +27,7 @@ fileinit(void)
 
 // Allocate a file structure.
 struct file*
-filealloc(void)
+filealloc_(void)
 {
   struct file *f;
 
@@ -43,15 +43,26 @@ filealloc(void)
   return 0;
 }
 
+// Allocate a file structure.
+struct file*
+filealloc(void)
+{
+  struct file *f;
+
+  f = bd_malloc(sizeof(struct file));
+  if (f && f->ref == 0)
+    f->ref = 1;
+
+  return f;
+}
+
 // Increment ref count for file f.
 struct file*
 filedup(struct file *f)
 {
-  acquire(&ftable.lock);
   if(f->ref < 1)
     panic("filedup");
   f->ref++;
-  release(&ftable.lock);
   return f;
 }
 
@@ -61,17 +72,13 @@ fileclose(struct file *f)
 {
   struct file ff;
 
-  acquire(&ftable.lock);
   if(f->ref < 1)
     panic("fileclose");
   if(--f->ref > 0){
-    release(&ftable.lock);
     return;
   }
   ff = *f;
-  f->ref = 0;
-  f->type = FD_NONE;
-  release(&ftable.lock);
+  bd_free(f);
 
   if(ff.type == FD_PIPE){
     pipeclose(ff.pipe, ff.writable);
