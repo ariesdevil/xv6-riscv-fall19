@@ -16,43 +16,36 @@
 struct devsw devsw[NDEV];
 struct {
   struct spinlock lock;
-  struct file file[NFILE];
+  struct list lst;
 } ftable;
+
+struct file_ptr {
+  struct file file;
+  struct list node;
+};
 
 void
 fileinit(void)
 {
   initlock(&ftable.lock, "ftable");
-}
-
-// Allocate a file structure.
-struct file*
-filealloc_(void)
-{
-  struct file *f;
-
-  acquire(&ftable.lock);
-  for(f = ftable.file; f < ftable.file + NFILE; f++){
-    if(f->ref == 0){
-      f->ref = 1;
-      release(&ftable.lock);
-      return f;
-    }
-  }
-  release(&ftable.lock);
-  return 0;
+  lst_init(&ftable.lst);
 }
 
 // Allocate a file structure.
 struct file*
 filealloc(void)
 {
-  struct file *f;
-
-  f = bd_malloc(sizeof(struct file));
-  if (f && f->ref == 0)
-    f->ref = 1;
-
+  acquire(&ftable.lock);
+  struct list *head = &ftable.lst;
+  // allocate file object and linked-list pointer
+  struct file_ptr *fp = bd_malloc(sizeof(struct file_ptr));
+  // clear data
+  memset(fp, 0, sizeof(struct file_ptr));
+  // push item to linked-list
+  struct file *f = (struct file*) fp;
+  lst_push(head, &fp->node);
+  f->ref = 1;
+  release(&ftable.lock);
   return f;
 }
 
@@ -60,9 +53,11 @@ filealloc(void)
 struct file*
 filedup(struct file *f)
 {
+  acquire(&ftable.lock);
   if(f->ref < 1)
     panic("filedup");
   f->ref++;
+  release(&ftable.lock);
   return f;
 }
 
@@ -72,13 +67,17 @@ fileclose(struct file *f)
 {
   struct file ff;
 
+  acquire(&ftable.lock);
   if(f->ref < 1)
     panic("fileclose");
   if(--f->ref > 0){
+    release(&ftable.lock);
     return;
   }
   ff = *f;
-  bd_free(f);
+  f->ref = 0;
+  f->type = FD_NONE;
+  release(&ftable.lock);
 
   if(ff.type == FD_PIPE){
     pipeclose(ff.pipe, ff.writable);
@@ -87,6 +86,10 @@ fileclose(struct file *f)
     iput(ff.ip);
     end_op(ff.ip->dev);
   }
+
+  struct file_ptr* fp = (struct file_ptr*) f;
+  lst_remove(&fp->node);
+  bd_free(f);
 }
 
 // Get metadata about file f.
@@ -96,7 +99,7 @@ filestat(struct file *f, uint64 addr)
 {
   struct proc *p = myproc();
   struct stat st;
-  
+
   if(f->type == FD_INODE || f->type == FD_DEVICE){
     ilock(f->ip);
     stati(f->ip, &st);
@@ -182,4 +185,3 @@ filewrite(struct file *f, uint64 addr, int n)
 
   return ret;
 }
-
