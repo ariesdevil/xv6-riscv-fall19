@@ -241,6 +241,21 @@ growproc(int n)
   return 0;
 }
 
+// Handle page fault intr.
+int handle_page_fault(struct proc* p, uint64 addr) {
+    char *mem;
+    addr = PGROUNDDOWN(addr);
+    if (addr >= p->sz) return -1;
+    mem = kalloc();
+    if (mem == 0) return -1;
+    memset(mem, 0, PGSIZE);
+    if (mappages(p->pagetable, addr, PGSIZE, (uint64)mem, PTE_W|PTE_X|PTE_R|PTE_U) != 0) {
+      kfree(mem);
+      return -1;
+    }
+    return 0;
+}
+
 // Create a new process, copying the parent.
 // Sets up child kernel stack to return as if from fork() system call.
 int

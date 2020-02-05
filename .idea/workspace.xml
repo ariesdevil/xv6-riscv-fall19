@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Default" GENERATION_DIR="build" />
+      <configuration PROFILE_NAME="Debug-Remote" TOOLCHAIN_NAME="snowlulu" GENERATION_OPTIONS="-G Ninja" GENERATION_DIR="build">
+        <ADDITIONAL_GENERATION_ENVIRONMENT>
+          <envs>
+            <env name="CC" value="/usr/bin/clang" />
+            <env name="CXX" value="/usr/bin/clang++" />
+          </envs>
+        </ADDITIONAL_GENERATION_ENVIRONMENT>
+      </configuration>
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3503d56c-2c3b-41c4-8e88-ef65ebb80fca" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/defs.h" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/defs.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/exec.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/exec.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/proc.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/proc.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/sysfile.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/sysfile.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/sysproc.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/sysproc.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/trap.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/trap.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/vm.c" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CompDBLocalSettings">
+    <option name="availableProjects">
+      <map>
+        <entry>
+          <key>
+            <ExternalProjectPojo>
+              <option name="name" value="xv6-riscv-fall19" />
+              <option name="path" value="$PROJECT_DIR$" />
+            </ExternalProjectPojo>
+          </key>
+          <value>
+            <list>
+              <ExternalProjectPojo>
+                <option name="name" value="xv6-riscv-fall19" />
+                <option name="path" value="$PROJECT_DIR$" />
+              </ExternalProjectPojo>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="modificationStamps">
+      <map>
+        <entry key="$PROJECT_DIR$/compile_commands.json" value="0" />
+      </map>
+    </option>
+    <option name="projectSyncType">
+      <map>
+        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="RfIJpSNx" />
+  </component>
+  <component name="ProjectId" id="1WO9EQH7Q3kHnfARI4l5tKlGr64" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="NewWatcherDialog.advanced.open" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="cf.advertisement.text.overridden" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/compile_commands.json" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3503d56c-2c3b-41c4-8e88-ef65ebb80fca" name="Default Changelist" comment="" />
+      <created>1579009661276</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1579009661276</updated>
+      <workItem from="1579009662604" duration="163000" />
+      <workItem from="1579009837352" duration="4234000" />
+      <workItem from="1579327022563" duration="11496000" />
+      <workItem from="1579341194682" duration="11250000" />
+      <workItem from="1579609038081" duration="27000" />
+      <workItem from="1579609078958" duration="139000" />
+      <workItem from="1579609229971" duration="302000" />
+      <workItem from="1579609544923" duration="6605000" />
+      <workItem from="1579783095702" duration="507000" />
+      <workItem from="1579783731441" duration="40000" />
+      <workItem from="1579783786548" duration="13772000" />
+      <workItem from="1580302981620" duration="18995000" />
+      <workItem from="1580477078047" duration="86000" />
+      <workItem from="1580477189033" duration="23955000" />
+      <workItem from="1580739889937" duration="57000" />
+      <workItem from="1580739972274" duration="180000" />
+      <workItem from="1580740179395" duration="1812000" />
+      <workItem from="1580819284483" duration="26000" />
+      <workItem from="1580819323617" duration="8580000" />
+      <workItem from="1580905127264" duration="17151000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="3259" y="410" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1580220671249">
+      <screen x="2560" y="0" width="1920" height="1200" />
+    </state>
+    <state x="3259" y="410" key="#com.intellij.fileTypes.FileTypeChooser/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1580220671249" />
+    <state x="3208" y="335" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1580819309691">
+      <screen x="2560" y="0" width="1920" height="1200" />
+    </state>
+    <state x="3208" y="335" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1580819309691" />
+    <state x="3230" y="416" width="667" height="653" key="EditFileWatcherDialog" timestamp="1579609408384">
+      <screen x="2560" y="0" width="1920" height="1200" />
+    </state>
+    <state x="893" y="499" width="772" height="665" key="EditFileWatcherDialog/0.0.2560.1440/2560.0.1920.1200@0.0.2560.1440" timestamp="1579009977100" />
+    <state x="3230" y="416" width="667" height="653" key="EditFileWatcherDialog/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1579609408384" />
+    <state x="3146" y="299" key="SettingsEditor" timestamp="1580821401696">
+      <screen x="2560" y="0" width="1920" height="1200" />
+    </state>
+    <state x="781" y="359" key="SettingsEditor/0.0.2560.1440/2560.0.1920.1200@0.0.2560.1440" timestamp="1579010273520" />
+    <state x="3146" y="299" key="SettingsEditor/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1580821401696" />
+    <state x="3278" y="474" key="com.intellij.ide.util.TipDialog" timestamp="1580302985527">
+      <screen x="2560" y="23" width="1920" height="1177" />
+    </state>
+    <state x="957" y="552" key="com.intellij.ide.util.TipDialog/0.0.2560.1440/2560.0.1920.1200@0.0.2560.1440" timestamp="1579327025770" />
+    <state x="3278" y="460" key="com.intellij.ide.util.TipDialog/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1579783786674" />
+    <state x="3278" y="474" key="com.intellij.ide.util.TipDialog/0.23.2560.1366/2560.23.1920.1177@2560.23.1920.1177" timestamp="1580302985527" />
+    <state x="3269" y="318" width="670" height="564" key="search.everywhere.popup" timestamp="1580921042146">
+      <screen x="2560" y="0" width="1920" height="1200" />
+    </state>
+    <state x="945" y="382" width="670" height="676" key="search.everywhere.popup/0.0.2560.1440/2560.0.1920.1200@0.0.2560.1440" timestamp="1579011706840" />
+    <state x="3269" y="318" width="670" height="564" key="search.everywhere.popup/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1580921042146" />
+    <state x="3269" y="318" width="670" height="564" key="search.everywhere.popup/0.23.2560.1366/2560.23.1920.1177@2560.23.1920.1177" timestamp="1580905572815" />
+  </component>
+</project>

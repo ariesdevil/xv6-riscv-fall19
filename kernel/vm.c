@@ -164,7 +164,7 @@ mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
     if((pte = walk(pagetable, a, 1)) == 0)
       return -1;
     if(*pte & PTE_V)
-      panic("remap");
+      return -1;
     *pte = PA2PTE(pa) | perm | PTE_V;
     if(a == last)
       break;
@@ -186,20 +186,22 @@ uvmunmap(pagetable_t pagetable, uint64 va, uint64 size, int do_free)
 
   a = PGROUNDDOWN(va);
   last = PGROUNDDOWN(va + size - 1);
-  for(;;){
-    if((pte = walk(pagetable, a, 0)) == 0)
-      panic("uvmunmap: walk");
-    if((*pte & PTE_V) == 0){
-      printf("va=%p pte=%p\n", a, *pte);
-      panic("uvmunmap: not mapped");
+  for(;;) {
+    if ((pte = walk(pagetable, a, 0)) == 0){
+      // page directory is not mapped, ignore.
+    } else {
+      if ((*pte & PTE_V) == 0) {
+        // page is not mapped, ignore.
+      } else {
+        if (PTE_FLAGS(*pte) == PTE_V)
+          panic("uvmunmap: not a leaf");
+        if (do_free) {
+          pa = PTE2PA(*pte);
+          kfree((void *)pa);
+        }
+      }
+      *pte = 0;
     }
-    if(PTE_FLAGS(*pte) == PTE_V)
-      panic("uvmunmap: not a leaf");
-    if(do_free){
-      pa = PTE2PA(*pte);
-      kfree((void*)pa);
-    }
-    *pte = 0;
     if(a == last)
       break;
     a += PGSIZE;
@@ -326,9 +328,9 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
 
   for(i = 0; i < sz; i += PGSIZE){
     if((pte = walk(old, i, 0)) == 0)
-      panic("uvmcopy: pte should exist");
+      continue;
     if((*pte & PTE_V) == 0)
-      panic("uvmcopy: page not present");
+      continue;
     pa = PTE2PA(*pte);
     flags = PTE_FLAGS(*pte);
     if((mem = kalloc()) == 0)
@@ -395,8 +397,12 @@ copyin(pagetable_t pagetable, char *dst, uint64 srcva, uint64 len)
   while(len > 0){
     va0 = PGROUNDDOWN(srcva);
     pa0 = walkaddr(pagetable, va0);
-    if(pa0 == 0)
-      return -1;
+    if(pa0 == 0){
+      walk(pagetable, va0, 1);
+      pa0 = walkaddr(pagetable, va0);
+      if (pa0 == 0)
+        return -1;
+    }
     n = PGSIZE - (srcva - va0);
     if(n > len)
       n = len;
@@ -450,4 +456,33 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
   } else {
     return -1;
   }
+}
+
+void vmprint_helper(pagetable_t pagetable, int level) {
+  char padding[10];
+  for(int i = 0; i < 512; i++){
+    pte_t pte = pagetable[i];
+    if (pte & PTE_V) {
+      int j = 0;
+      for (;  j < level+1; j++) {
+        padding[j*3] = ' ';
+        padding[j*3+1] = '.';
+        padding[j*3+2] = '.';
+      }
+      padding[j*3] = '\0';
+      uint64 pa = PTE2PA(pte);
+      printf("%s%d: pte %p pa %p\n", padding, i, pte, pa);
+      if ((pte & (PTE_R | PTE_W | PTE_X)) == 0) {
+        vmprint_helper((pagetable_t)pa, level+1);
+      }
+    }
+  }
+}
+
+void
+vmprint(pagetable_t pagetable)
+{
+  // there are 2^9 = 512 PTEs in a page table.
+  printf("page table %p\n", pagetable);
+  vmprint_helper(pagetable, 0);
 }
