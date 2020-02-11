@@ -18,14 +18,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3503d56c-2c3b-41c4-8e88-ef65ebb80fca" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/defs.h" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/defs.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/exec.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/exec.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/proc.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/proc.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/sysfile.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/sysfile.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/syscall.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/syscall.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/syscall.h" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/syscall.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/kernel/sysproc.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/sysproc.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/trap.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/trap.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/kernel/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/vm.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/user.h" beforeDir="false" afterPath="$PROJECT_DIR$/user/user.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/usertests.c" beforeDir="false" afterPath="$PROJECT_DIR$/user/usertests.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +102,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="ServiceViewManager">
     <option name="viewStates">
@@ -146,7 +145,7 @@
       <workItem from="1580740179395" duration="1812000" />
       <workItem from="1580819284483" duration="26000" />
       <workItem from="1580819323617" duration="8580000" />
-      <workItem from="1580905127264" duration="17151000" />
+      <workItem from="1580905127264" duration="35204000" />
     </task>
     <servers />
   </component>
@@ -167,22 +166,22 @@
     </state>
     <state x="893" y="499" width="772" height="665" key="EditFileWatcherDialog/0.0.2560.1440/2560.0.1920.1200@0.0.2560.1440" timestamp="1579009977100" />
     <state x="3230" y="416" width="667" height="653" key="EditFileWatcherDialog/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1579609408384" />
-    <state x="3146" y="299" key="SettingsEditor" timestamp="1580821401696">
+    <state x="3146" y="299" key="SettingsEditor" timestamp="1581344666654">
       <screen x="2560" y="0" width="1920" height="1200" />
     </state>
     <state x="781" y="359" key="SettingsEditor/0.0.2560.1440/2560.0.1920.1200@0.0.2560.1440" timestamp="1579010273520" />
-    <state x="3146" y="299" key="SettingsEditor/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1580821401696" />
+    <state x="3146" y="299" key="SettingsEditor/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1581344666654" />
     <state x="3278" y="474" key="com.intellij.ide.util.TipDialog" timestamp="1580302985527">
       <screen x="2560" y="23" width="1920" height="1177" />
     </state>
     <state x="957" y="552" key="com.intellij.ide.util.TipDialog/0.0.2560.1440/2560.0.1920.1200@0.0.2560.1440" timestamp="1579327025770" />
     <state x="3278" y="460" key="com.intellij.ide.util.TipDialog/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1579783786674" />
     <state x="3278" y="474" key="com.intellij.ide.util.TipDialog/0.23.2560.1366/2560.23.1920.1177@2560.23.1920.1177" timestamp="1580302985527" />
-    <state x="3269" y="318" width="670" height="564" key="search.everywhere.popup" timestamp="1580921042146">
+    <state x="3269" y="318" width="670" height="564" key="search.everywhere.popup" timestamp="1581426818262">
       <screen x="2560" y="0" width="1920" height="1200" />
     </state>
     <state x="945" y="382" width="670" height="676" key="search.everywhere.popup/0.0.2560.1440/2560.0.1920.1200@0.0.2560.1440" timestamp="1579011706840" />
-    <state x="3269" y="318" width="670" height="564" key="search.everywhere.popup/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1580921042146" />
+    <state x="3269" y="318" width="670" height="564" key="search.everywhere.popup/0.0.2560.1440/2560.0.1920.1200@2560.0.1920.1200" timestamp="1581426818262" />
     <state x="3269" y="318" width="670" height="564" key="search.everywhere.popup/0.23.2560.1366/2560.23.1920.1177@2560.23.1920.1177" timestamp="1580905572815" />
   </component>
 </project>
