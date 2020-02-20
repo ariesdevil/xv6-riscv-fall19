@@ -34,11 +34,10 @@ trapinithart(void)
 // called from trampoline.S
 //
 void
-usertrap(void)
-{
+usertrap(void) {
   int which_dev = 0;
 
-  if((r_sstatus() & SSTATUS_SPP) != 0)
+  if ((r_sstatus() & SSTATUS_SPP) != 0)
     panic("usertrap: not from user mode");
 
   // send interrupts and exceptions to kerneltrap(),
@@ -46,14 +45,14 @@ usertrap(void)
   w_stvec((uint64)kernelvec);
 
   struct proc *p = myproc();
-  
+
   // save user program counter.
   p->tf->epc = r_sepc();
-  
-  if(r_scause() == 8){
+
+  if (r_scause() == 8) {
     // system call
 
-    if(p->killed)
+    if (p->killed)
       exit(-1);
 
     // sepc points to the ecall instruction,
@@ -77,8 +76,17 @@ usertrap(void)
     exit(-1);
 
   // give up the CPU if this is a timer interrupt.
-  if(which_dev == 2)
+  if(which_dev == 2) {
+    if (p->interval > 0) {
+      if (--p->ticks_passed <= 0) {
+        p->ticks_passed = p->interval;
+        memmove(&p->tmp_tf, p->tf, sizeof(p->tmp_tf));
+        p->tf->epc = p->handler;
+        usertrapret();
+      }
+    }
     yield();
+  }
 
   usertrapret();
 }

@@ -95,3 +95,29 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64
+sys_sigalarm(void)
+{
+  struct proc* p = myproc();
+  int nticks;
+  uint64 addr;
+  if(argint(0, &nticks) < 0)
+    return -1;
+  if(nticks < 0)
+    return -1;
+  if(argaddr(1, &addr) < 0)
+    return -1;
+  p->interval = nticks;
+  p->ticks_passed = nticks;
+  p->handler = addr;
+  return 0;
+}
+
+uint64
+sys_sigreturn(void)
+{
+  struct proc* p = myproc();
+  memmove(p->tf, &p->tmp_tf, sizeof(p->tmp_tf));
+  return 0;
+}

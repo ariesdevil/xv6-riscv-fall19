@@ -50,6 +50,7 @@ test0()
       break;
   }
   sigalarm(0, 0);
+  printf("\n test0 count: %d\n", count);
   if(count > 0){
     printf("test0 passed\n");
   } else {
@@ -87,6 +88,7 @@ test1()
       break;
     foo(i, &j);
   }
+  printf("\n test1 count: %d, i: %d, j: %d\n", count, i, j);
   if(count < 10){
     printf("\ntest1 failed: too few calls to the handler\n");
     exit(1);
