@@ -451,3 +451,32 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
     return -1;
   }
 }
+
+void vmprint_helper(pagetable_t pagetable, int level) {
+  char padding[10];
+  for(int i = 0; i < 512; i++){
+    pte_t pte = pagetable[i];
+    if (pte & PTE_V) {
+      int j = 0;
+      for (;  j < level+1; j++) {
+        padding[j*3] = ' ';
+        padding[j*3+1] = '.';
+        padding[j*3+2] = '.';
+      }
+      padding[j*3] = '\0';
+      uint64 pa = PTE2PA(pte);
+      printf("%s%d: pte %p pa %p\n", padding, i, pte, pa);
+      if ((pte & (PTE_R | PTE_W | PTE_X)) == 0) {
+        vmprint_helper((pagetable_t)pa, level+1);
+      }
+    }
+  }
+}
+
+void
+vmprint(pagetable_t pagetable)
+{
+  // there are 2^9 = 512 PTEs in a page table.
+  printf("page table %p\n", pagetable);
+  vmprint_helper(pagetable, 0);
+}

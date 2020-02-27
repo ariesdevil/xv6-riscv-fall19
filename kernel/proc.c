@@ -8,6 +8,7 @@
 #include "file.h"
 #include "proc.h"
 #include "defs.h"
+#include "fcntl.h"
 
 struct cpu cpus[NCPU];
 
@@ -23,11 +24,15 @@ static void wakeup1(struct proc *chan);
 
 extern char trampoline[]; // trampoline.S
 
+struct spinlock vma_lock;
+struct vma_t vmas[100];
+
 void
 procinit(void)
 {
   struct proc *p;
-  
+
+  initlock(&vma_lock, "vmalock");
   initlock(&pid_lock, "nextpid");
   for(p = proc; p < &proc[NPROC]; p++) {
       initlock(&p->lock, "proc");
@@ -241,6 +246,49 @@ growproc(int n)
   return 0;
 }
 
+// Handle page fault interruption
+int handle_page_fault(struct proc* p, uint64 addr) {
+  char *mem;
+  struct vma_t* tmp = p->vma;
+  int found = 0;
+  while (tmp) {
+    if (tmp->start <= addr && tmp->end > addr) {
+      found = 1;
+      break;
+    }
+    tmp = tmp->next;
+  }
+  if (!found) {
+    return -1;
+  }
+  uint64 page_addr = PGROUNDDOWN(addr);
+  uint64 off = page_addr-tmp->mfile_start;
+  mem = kalloc();
+  if (mem == 0) return -1;
+  memset(mem, 0, PGSIZE);
+
+  int perm = PTE_U | PTE_V;
+  if (tmp->perm & PROT_READ)
+    perm |= PTE_R;
+  if (tmp->perm & PROT_WRITE)
+    perm |= PTE_W;
+
+  if (mappages(p->pagetable, page_addr, PGSIZE, (uint64)mem, perm) != 0) {
+    printf("mappage err: %p\n", mem);
+    kfree(mem);
+    return -1;
+  }
+
+  ilock(tmp->mfile->ip);
+  if (readi(tmp->mfile->ip, 1, page_addr, off, PGSIZE) == -1) {
+    printf("mmap readi err: start: %p, offset: %d\n");
+    iunlock(tmp->mfile->ip);
+    return -1;
+  }
+  iunlock(tmp->mfile->ip);
+  return 0;
+}
+
 // Create a new process, copying the parent.
 // Sets up child kernel stack to return as if from fork() system call.
 int
@@ -284,6 +332,29 @@ fork(void)
   np->state = RUNNABLE;
 
   release(&np->lock);
+
+  struct vma_t* tmp = p->vma;
+  while (tmp) {
+    acquire(&vma_lock);
+    for (int i = 0; i < sizeof(vmas); ++i) {
+      if (!vmas[i].used) {
+        struct vma_t* np_tmp = &vmas[i];
+        memmove(np_tmp, tmp, sizeof(struct vma_t));
+        np_tmp->used = 1;
+        np_tmp->mfile = filedup(tmp->mfile);
+
+        if (np->vma) {
+          np_tmp->next = np->vma;
+          np->vma = np_tmp;
+        } else {
+          np->vma = np_tmp;
+        }
+        break;
+      }
+    }
+    release(&vma_lock);
+    tmp = tmp->next;
+  }
 
   return pid;
 }
@@ -374,6 +445,17 @@ exit(int status)
   p->state = ZOMBIE;
 
   release(&original_parent->lock);
+
+  while (p->vma) {
+    for (uint64 va = p->vma->start; va < p->vma->end; va += PGSIZE) {
+      if (walkaddr(p->pagetable, va))
+        uvmunmap(p->pagetable, va, PGSIZE, 1);
+    }
+    acquire(&vma_lock);
+    p->vma->used = 0;
+    release(&vma_lock);
+    p->vma = p->vma->next;
+  }
 
   // Jump into the scheduler, never to return.
   sched();

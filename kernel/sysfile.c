@@ -15,6 +15,7 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
+#include "memlayout.h"
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
@@ -481,5 +482,133 @@ sys_pipe(void)
     return -1;
   }
   return 0;
+}
+
+extern struct spinlock vma_lock;
+extern struct vma_t vmas[100];
+
+uint64
+sys_mmap(void)
+{
+  uint64 addr;
+  int length;
+  int prot;
+  int flags;
+  int fd;
+  struct file *f;
+//  int offset = 0; // assume from 0
+  if (argaddr(0, &addr) < 0)
+    return -1;
+  if (argint(1, &length) < 0)
+    return -1;
+  if (argint(2, &prot) < 0)
+    return -1;
+  if (argint(3, &flags) < 0)
+    return -1;
+  if (argfd(4, &fd, &f) < 0)
+    return -1;
+
+  if (!(f->writable)) {
+    if (prot != PROT_READ && flags != MAP_PRIVATE) {
+      return -1;
+    }
+  }
+
+  struct proc* p = myproc();
+  acquire(&vma_lock);
+  for (int i = 0; i < sizeof(vmas); ++i) {
+    if (!vmas[i].used) {
+      if (p->vma) {
+        struct vma_t* tmp = &vmas[i];
+        tmp->next = p->vma;
+        p->vma = tmp;
+        p->vma->end = p->vma->next->start;
+        p->vma->start = PGROUNDDOWN(p->vma->end - length);
+      } else {
+        p->vma = &vmas[i];
+        p->vma->end = PGROUNDUP(UMMAPSTART);
+        p->vma->start = PGROUNDDOWN(p->vma->end - length);
+      }
+      p->vma->used = 1;
+      break;
+    }
+  }
+  release(&vma_lock);
+
+  p->vma->length = length;
+  p->vma->perm = prot;
+  p->vma->flag = flags;
+  p->vma->mfile = f;
+  p->vma->mfile_start = p->vma->start;
+  p->vma->mfile->ref++;
+
+  return p->vma->start;
+}
+
+uint64
+sys_munmap(void)
+{
+  uint64 addr;
+  int length;
+  if (argaddr(0, &addr) < 0)
+    return -1;
+  if (argint(1, &length) < 0)
+    return -1;
+
+  uint64 start = addr;
+  uint64 end = addr+length;
+  struct proc* p = myproc();
+  struct vma_t* tmp = p->vma;
+  struct vma_t* prev = 0;
+  while (tmp) {
+    if (tmp->end <= start || tmp->start >= end) {
+      prev = tmp;
+      tmp = tmp->next;
+      continue;
+    }
+    if (tmp->start < start && tmp->end > end) {
+      printf("punch a hole error.\n");
+      return -1;
+    }
+
+    if (start < tmp->start || end > tmp->end)
+      return -1;
+
+    if (tmp->flag & MAP_SHARED) {
+      begin_op(ROOTDEV);
+      ilock(tmp->mfile->ip);
+      writei(tmp->mfile->ip, 1, PGROUNDDOWN(addr), PGROUNDDOWN(addr)-tmp->mfile_start, PGROUNDUP(end)-PGROUNDDOWN(addr));
+      iunlock(tmp->mfile->ip);
+      end_op(ROOTDEV);
+    }
+
+    for (uint64 va = start; va < end; va += PGSIZE) {
+      if (walkaddr(p->pagetable, va)) {
+        uvmunmap(p->pagetable, va, PGSIZE, 1);
+      }
+    }
+
+    if (tmp->start == start && tmp->end == end) {
+      // unmap whole
+      // remove vma from vma list and put it back to global vmas array.
+      if (prev)
+        prev->next = tmp->next;
+      else
+        p->vma = tmp->next;
+      acquire(&vma_lock);
+      tmp->used = 0;
+      release(&vma_lock);
+      fileclose(tmp->mfile);
+    } else if (tmp->end == end) {
+      // unmap high half
+      tmp->end = start;
+    } else if (tmp->start == start) {
+      // unmap low half;
+      tmp->start = end;
+    }
+    return 0;
+  }
+
+  return -1;
 }
 
