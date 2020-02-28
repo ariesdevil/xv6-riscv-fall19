@@ -184,6 +184,9 @@ QEMUOPTS += -device e1000,netdev=net0,bus=pcie.0
 qemu: $K/kernel fs.img
 	$(QEMU) $(QEMUOPTS)
 
+index: $K/kernel fs.img
+	@echo finish
+
 .gdbinit: .gdbinit.tmpl-riscv
 	sed "s/:1234/:$(GDBPORT)/" < $^ > $@
 

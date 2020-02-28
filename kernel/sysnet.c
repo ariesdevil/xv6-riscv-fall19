@@ -87,6 +87,73 @@ bad:
 // and writing for network sockets.
 //
 
+static void sockfree(struct sock* si) {
+  struct sock** pos = &sockets;
+  acquire(&lock);
+  while (*pos != si) {
+    pos = &(*pos)->next;
+  }
+  *pos = si->next;
+  release(&lock);
+}
+
+static struct sock* sockfind(uint32 raddr, uint16 lport, uint16 rport) {
+  struct sock* pos = sockets;
+  acquire(&lock);
+  while (pos) {
+    if (pos->raddr == raddr && pos->lport == lport && pos->rport == rport) {
+      release(&lock);
+      return pos;
+    }
+    pos = pos->next;
+  }
+  release(&lock);
+  return 0;
+}
+
+void sockclose(struct sock* si) {
+  sockfree(si);
+  kfree((char*)si);
+}
+
+int sockwrite(struct sock* si, uint64 addr, int n) {
+  unsigned int headroom_len = sizeof(struct eth) + sizeof(struct ip) +
+                              sizeof(struct udp);
+  struct mbuf* mbuf = mbufalloc(headroom_len);
+  struct proc* p = myproc();
+  acquire(&si->lock);
+  if (n > MBUF_SIZE-headroom_len)
+    n = MBUF_SIZE-headroom_len;
+  if (copyin(p->pagetable, mbuf->head, addr, n) == -1)
+    return -1;
+  mbufput(mbuf, n);
+  net_tx_udp(mbuf, si->raddr, si->lport, si->rport);
+  release(&si->lock);
+  return n;
+}
+
+int sockread(struct sock* si, uint64 addr, int n) {
+  struct proc* p = myproc();
+  acquire(&si->lock);
+  while (mbufq_empty(&si->rxq)) {
+    if(p->killed) {
+      release(&si->lock);
+      return -1;
+    }
+    sleep(&si->rxq, &si->lock);
+  }
+  struct mbuf* mbuf = mbufq_pophead(&si->rxq);
+  if (n > mbuf->len)
+    n = mbuf->len;
+
+  if (copyout(p->pagetable, addr, mbuf->head, n) == -1)
+    return -1;
+
+  mbuffree(mbuf);
+  release(&si->lock);
+  return n;
+}
+
 // called by protocol handler layer to deliver UDP packets
 void
 sockrecvudp(struct mbuf *m, uint32 raddr, uint16 lport, uint16 rport)
@@ -98,5 +165,11 @@ sockrecvudp(struct mbuf *m, uint32 raddr, uint16 lport, uint16 rport)
   // any sleeping reader. Free the mbuf if there are no sockets
   // registered to handle it.
   //
+  struct sock* si = sockfind(raddr, lport, rport);
+  if (si) {
+    mbufq_pushtail(&si->rxq, m);
+    wakeup(&si->rxq);
+    return;
+  }
   mbuffree(m);
 }
